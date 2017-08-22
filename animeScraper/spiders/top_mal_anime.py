@@ -1,4 +1,5 @@
 import scrapy
+import re
 
 class TopAnimeSpider(scrapy.Spider):
     name = "topanime" # Name of the spider, to be used when crawling
@@ -17,13 +18,28 @@ class TopAnimeSpider(scrapy.Spider):
             next_page = self.url + next_page
             yield scrapy.Request(next_page, self.parse)
 
-        def parse_anime(self, response):
-            slug = reponse.url.split('/')
-            slug = slug[len(slug) - 1].replace('_','-').lower()
+    def parse_anime(self, response):
+        link = response.url
 
-            sscore = response.css('.anime-detail-header-stats .score::text').extract_first()
-            sscore = float(rating.rstrip())
+        sscore = response.css('.anime-detail-header-stats .score::text').extract_first()
+        sscore = float(sscore.rstrip())
 
-            title = response.css('h1 span::text').extract_first()
+        title = response.css('h1 span::text').extract_first()
 
-            date =
+        date = ''
+        date_elements = response.xpath('//div[@class="spaceit"]/text()').extract()
+        for elem in date_elements:
+            clean_elem = elem.strip()
+            if re.match(r'\d{4]',clean_elem[-4:]):
+                date = clean_elem
+                print(date)
+
+        genres = response.xpath('//a[contains(@href, "genre")]/text()').extract()
+
+        yield {
+            'link': link,
+            'title': title,
+            'date': date,
+            'sscorescr': sscore,
+            'genres': genres
+            }

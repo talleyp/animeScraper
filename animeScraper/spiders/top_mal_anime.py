@@ -28,11 +28,11 @@ class TopAnimeSpider(scrapy.Spider):
 
         date = ''
         date_elements = response.xpath('//div[@class="spaceit"]/text()').extract()
+        RE_4d = re.compile('\d{4}')
         for elem in date_elements:
             clean_elem = elem.strip()
-            if re.match(r'\d{4]',clean_elem[-4:]):
+            if bool(RE_4d.search(clean_elem)):
                 date = clean_elem
-                print(date)
 
         genres = response.xpath('//a[contains(@href, "genre")]/text()').extract()
 
@@ -40,6 +40,6 @@ class TopAnimeSpider(scrapy.Spider):
             'link': link,
             'title': title,
             'date': date,
-            'sscorescr': sscore,
+            'sscore': sscore,
             'genres': genres
             }

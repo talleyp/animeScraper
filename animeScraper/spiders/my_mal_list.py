@@ -1,17 +1,15 @@
-import scrapy
+from scrapy.spiders import XMLFeedSpider
+from animeScraper.items import AnimescraperItem
 
-class MyListSpider(scrapy.Spider):
-    name = "anime"
-    url = 'https://myanimelist.net/animelist/Shaliber'
+class MySpider(XMLFeedSpider):
+    name = 'myanimelist'
+    allowed_domains = ['myanimelist.net']
+    start_urls = ['https://myanimelist.net/malappinfo.php?u=shaliber&status=all&type=anime']
+    iterator = 'iternodes'  # This is actually unnecessary, since it's the default value
+    itertag = 'item'
 
-    def start_requests(self):
-        yield scrapy.Request(self.url, self.parse)
+    def parse_node(self, response, node):
+        item = Items()
 
-
-    def parse(self, response):
-        animes = response.xpath('//tbody[@class=list-item]')
-        filename = "AnimeTitles"
-        for anime in animes:
-            title = anime.xpath('//table//tr//td[@class="data title clearfix"]\
-                                //a/@href').extract_first()
-            print(dict(title=title))
+        item['title'] = node.select('series_title').extract()
+        print(item['title'])

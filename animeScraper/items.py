@@ -13,6 +13,6 @@ class AnimescraperItem(scrapy.Item):
     title = scrapy.Field() # anime title
     link = scrapy.Field() # Link to MAL entry
     sscore = scrapy.Field() # Score from site
-    date = scrappy.Field() # Date released
-    genres = scrappy.Field() # Genres of anime
+    date = scrapy.Field() # Date released
+    genres = scrapy.Field() # Genres of anime
     pass
